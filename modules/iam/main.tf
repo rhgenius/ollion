@@ -231,3 +231,32 @@ resource "aws_iam_role_policy_attachment" "codepipeline_policy_attachment" {
   role       = aws_iam_role.codepipeline_role.name
   policy_arn = aws_iam_policy.codepipeline_policy.arn
 }
+
+# IAM Role for Glue
+resource "aws_iam_role" "glue_role" {
+  name = "${var.project_name}-glue-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "glue.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-glue-role"
+    Environment = var.environment
+  }
+}
+
+# Attach policies to Glue role
+resource "aws_iam_role_policy_attachment" "glue_service" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+  role       = aws_iam_role.glue_role.name
+}

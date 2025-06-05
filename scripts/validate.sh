@@ -23,12 +23,18 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Get the script's directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="$( dirname "$SCRIPT_DIR" )"
+
+cd "$PROJECT_DIR"
+
 print_status "Validating Terraform configurations..."
 
 # Validate each environment
 for env in dev staging production; do
     print_status "Validating $env environment..."
-    cd "environments/$env"
+    cd "$PROJECT_DIR/environments/$env"
     
     # Initialize and validate
     terraform init -backend=false
@@ -37,7 +43,7 @@ for env in dev staging production; do
     # Format check
     terraform fmt -check
     
-    cd ../..
+    cd "$PROJECT_DIR"
     print_status "$env environment validation completed"
 done
 

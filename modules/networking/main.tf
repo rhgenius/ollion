@@ -130,3 +130,31 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
+
+# Default Security Group for the VPC
+resource "aws_security_group" "default" {
+  name        = "${var.project_name}-${var.environment}-default-sg"
+  description = "Default security group for ${var.project_name}"
+  vpc_id      = aws_vpc.main.id
+
+  # Allow all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow internal traffic within the VPC
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  tags = {
+    Name        = "${var.project_name}-default-sg"
+    Environment = var.environment
+  }
+}

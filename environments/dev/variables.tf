@@ -83,3 +83,44 @@ variable "eks_node_group_max_size" {
     prod  = 5
   }
 }
+
+
+# Data Science Variables
+variable "redshift_node_type" {
+  description = "Node type for Redshift cluster"
+  type        = string
+  default     = "dc2.large"
+}
+
+variable "redshift_number_of_nodes" {
+  description = "Number of nodes in the Redshift cluster"
+  type        = number
+  default     = 2
+}
+
+variable "glue_job_timeout" {
+  description = "Timeout for Glue jobs in minutes"
+  type        = number
+  default     = 60
+}
+
+
+# Add these variables at the end of the file
+
+variable "quicksight_notification_email" {
+  description = "Email for QuickSight notifications"
+  type        = string
+  default     = "admin@example.com"
+}
+
+variable "quicksight_edition" {
+  description = "Edition of QuickSight to use (STANDARD, ENTERPRISE)"
+  type        = string
+  default     = "ENTERPRISE"
+}
+
+variable "redshift_database_name" {
+  description = "Name of the Redshift database"
+  type        = string
+  default     = "dev"
+}

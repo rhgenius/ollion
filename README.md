@@ -1,36 +1,133 @@
-# AWS DevOps Infrastructure with Terraform
-This repository contains Terraform code to deploy a complete AWS DevOps infrastructure including networking, EKS clusters, IAM roles, CodeCommit, CodeBuild, CodePipeline, and ECR resources.
+# AWS DevOps and Data Science Infrastructure with Terraform
+This repository contains Terraform code to deploy a complete AWS DevOps and Data Science infrastructure including networking, EKS clusters, IAM roles, CodeCommit, CodeBuild, CodePipeline, ECR resources, and data science components like S3, Kinesis, Glue, Redshift, and SageMaker.
 
 ## Project Structure
 ```
 /
-├── environments/         # Environment-specific 
-configurations
-│   ├── dev/             # Development environment
-│   ├── staging/         # Staging environment
-│   └── production/      # Production environment
-├── modules/             # Reusable Terraform 
-modules
-│   ├── codebuild/       # AWS CodeBuild module
-│   ├── codecommit/      # AWS CodeCommit module
-│   ├── codepipeline/    # AWS CodePipeline module
-│   ├── ecr/             # AWS ECR module
-│   ├── eks/             # AWS EKS module
-│   ├── iam/             # AWS IAM module
-│   └── networking/      # AWS VPC and networking 
-module
-├── scripts/             # Utility scripts
-│   └── validate.sh      # Terraform validation 
-script
-├── docs/                # Documentation
-└── templates/           # Template files
+├── .gitignore
+├── README.md
+├── docs/
+│   ├── architecture.md
+│   ├── deployment-guide.md
+│   └── troubleshooting.md
+├── environments/
+│   ├── dev/
+│   │   ├── backend.tf
+│   │   ├── graph.png
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── plan.out
+│   │   └── variables.tf
+│   ├── production/
+│   │   ├── backend.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── staging/
+│       ├── backend.tf
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+├── modules/
+│   ├── codebuild/       # AWS CodeBuild module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── codecommit/      # AWS CodeCommit module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── codepipeline/    # AWS CodePipeline module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── ecr/             # AWS ECR module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── eks/             # AWS EKS module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── glue/            # AWS Glue module for ETL
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── iam/             # AWS IAM module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── kinesis/         # AWS Kinesis module for data streaming
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── networking/      # AWS VPC and networking module
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── redshift/        # AWS Redshift module for data warehousing
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── s3/              # AWS S3 module for object storage
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── sagemaker/       # AWS SageMaker module for ML
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+├── scripts/
+│   ├── deploy.sh
+│   ├── destroy.sh
+│   └── validate.sh
+├── templates/
+│   ├── appspec.yaml.template
+│   ├── buildspec.yml
+│   └── taskdef.json.template
+└── terraform.tfvars.example
 ```
+
+## GCP to AWS Service Mapping
+
+### DevOps Components
+| GCP Service | AWS Equivalent |
+|-------------|---------------|
+| Google Kubernetes Engine (GKE) | Amazon Elastic Kubernetes Service (EKS) |
+| Cloud Source Repositories | AWS CodeCommit |
+| Cloud Build | AWS CodeBuild |
+| Cloud Deploy | AWS CodePipeline |
+| Container Registry | Amazon Elastic Container Registry (ECR) |
+| Cloud IAM | AWS Identity and Access Management (IAM) |
+| Virtual Private Cloud (VPC) | Amazon Virtual Private Cloud (VPC) |
+
+### Data Science Components
+| GCP Service | AWS Equivalent |
+|-------------|---------------|
+| Cloud Storage | Amazon Simple Storage Service (S3) |
+| Pub/Sub | Amazon Kinesis, Amazon MSK |
+| Dataflow | AWS Glue, Amazon EMR |
+| BigQuery | Amazon Redshift, Amazon Athena |
+| Vertex AI | Amazon SageMaker |
+| Cloud Composer | Amazon Managed Workflows for Apache Airflow (MWAA) |
+| Cloud SQL | Amazon RDS |
+| Cloud Spanner | Amazon DynamoDB |
+| Data Catalog | AWS Glue Data Catalog |
+| Cloud Workflows | AWS Step Functions |
+
 ## Module Descriptions
 ### Networking Module
 Creates a VPC with public and private subnets, internet gateway, NAT gateway, and route tables for secure network architecture.
 
 ### IAM Module
-Sets up IAM roles and policies for services like EKS, CodeBuild, and CodePipeline with least privilege permissions.
+Sets up IAM roles and policies for services like EKS, CodeBuild, CodePipeline, and data science services with least privilege permissions.
 
 ### EKS Module
 Deploys Amazon EKS clusters with worker nodes for container orchestration.
@@ -47,43 +144,52 @@ Creates CI/CD pipelines with source and build stages.
 ### ECR Module
 Sets up container registries for storing Docker images.
 
+### S3 Module
+Creates S3 buckets for data storage with appropriate configurations for data lakes.
+
+### Kinesis Module
+Sets up Kinesis streams for real-time data ingestion and processing.
+
+### Glue Module
+Configures AWS Glue for ETL jobs, data catalogs, and data integration.
+
+### Redshift Module
+Deploys Amazon Redshift clusters for data warehousing and analytics.
+
+### SageMaker Module
+Sets up Amazon SageMaker for machine learning model training, tuning, and deployment.
+
 ## Prerequisites
 - AWS CLI configured with appropriate credentials
 - Terraform v1.0.0 or newer
 - Git
+
 ## Quick Start
 1. Clone this repository
 2. Navigate to the desired environment directory
 3. Run the validation script to ensure configuration is correct
-```
+```bash
 ./scripts/validate.sh
 ```
+4. Run the deployment script to create the infrastructure
+```bash
+./scripts/deploy.sh
+```
+
+## Architecture Diagram
+The architecture diagram illustrates the high-level components and their interactions in the infrastructure.
+## Deployment Guide
+This guide provides detailed instructions on how to deploy the infrastructure using Terraform.
+
 ## Deployment Instructions
 ### For Each Environment (dev, staging, production)
 1. Navigate to the environment directory:
-```
-cd environments/dev
-```
 2. Initialize Terraform:
-```
-terraform init
-```
 3. Validate the configuration:
-```
-terraform validate
-```
 4. Format the code (optional):
-```
-terraform fmt
-```
 5. Plan the deployment:
-```
-terraform plan -out=tfplan
-```
 6. Apply the changes:
-```
-terraform apply tfplan
-```
+
 ## Validation Script
 The repository includes a validation script ( scripts/validate.sh ) that performs the following checks for each environment:
 
@@ -91,38 +197,40 @@ The repository includes a validation script ( scripts/validate.sh ) that perform
 - Validates the Terraform configuration
 - Checks the formatting of Terraform files
 To use the script:
-
 ```
 ./scripts/validate.sh
 ```
+
 This script helps ensure that all environments have valid configurations before deployment.
 
 ## Common Issues and Solutions
 ### 1. "Unsupported argument" Error
-Problem : When modules are referenced but not properly defined.
+Problem: When modules are referenced but not properly defined.
 
-Solution : Ensure all modules have proper variables.tf , main.tf , and outputs.tf files with appropriate definitions.
+Solution: Ensure all modules have proper variables.tf, main.tf, and outputs.tf files with appropriate definitions.
 
 ### 2. "Value for unconfigurable attribute" Error
-Problem : When trying to set attributes that are managed by AWS or deprecated.
+Problem: When trying to set attributes that are managed by AWS or deprecated.
 
-Solution : Remove the deprecated attributes (e.g., domain = "vpc" in aws_eip.nat ).
+Solution: Remove the deprecated attributes (e.g., domain = "vpc" in aws_eip.nat).
 
 ### 3. "Missing resource instance key" Error
-Problem : When referencing resources with count without specifying the index.
+Problem: When referencing resources with count without specifying the index.
 
-Solution : Use proper index notation (e.g., change aws_eip.nat.id to aws_eip.nat[count.index].id ).
+Solution: Use proper index notation (e.g., change aws_eip.nat.id to aws_eip.nat[count.index].id).
 
 ## Cleanup
 To destroy the infrastructure:
-
+```bash
+./scripts/destroy.sh
 ```
-cd environments/<environment_name>
-terraform destroy
-```
+## Troubleshooting
+For detailed troubleshooting, refer to the troubleshooting guide in the docs directory.
 ## Best Practices Implemented
-1. Modular Design : Code is organized into reusable modules for better maintainability.
-2. Environment Separation : Different environments (dev, staging, production) are isolated.
-3. Least Privilege : IAM roles follow the principle of least privilege.
-4. Resource Naming : Consistent naming conventions across resources.
-5. Validation : Pre-deployment validation to catch errors early.
+1. Modular Design: Code is organized into reusable modules for better maintainability.
+2. Environment Separation: Different environments (dev, staging, production) are isolated.
+3. Least Privilege: IAM roles follow the principle of least privilege.
+4. Resource Naming: Consistent naming conventions across resources.
+5. Validation: Pre-deployment validation to catch errors early.
+6. Data Pipeline Integration: Seamless integration between data ingestion, processing, storage, and analytics components.
+7. Scalable Architecture: Infrastructure designed to scale with growing data needs.

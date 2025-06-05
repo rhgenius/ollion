@@ -106,3 +106,73 @@ resource "random_string" "bucket_suffix" {
   special = false
   upper   = false
 }
+
+# Data Science Modules
+module "s3" {
+  source = "../../modules/s3"
+  
+  project_name = var.project_name
+  environment = var.environment
+}
+
+module "kinesis" {
+  source = "../../modules/kinesis"
+  
+  project_name = var.project_name
+  environment = var.environment
+  shard_count = 2
+  retention_period = 48
+}
+
+module "glue" {
+  source = "../../modules/glue"
+  
+  project_name = var.project_name
+  environment = var.environment
+  s3_bucket_id = module.s3.bucket_id
+  s3_bucket_arn = module.s3.bucket_arn
+  kinesis_stream_arn = module.kinesis.stream_arn
+  glue_role_arn = module.iam.glue_role_arn
+  glue_job_timeout = var.glue_job_timeout
+}
+
+module "redshift" {
+  source = "../../modules/redshift"
+  
+  project_name = var.project_name
+  environment = var.environment
+  vpc_id = module.networking.vpc_id
+  subnet_ids = module.networking.private_subnet_ids
+  security_group_ids = [module.networking.default_security_group_id]
+}
+
+module "sagemaker" {
+  source = "../../modules/sagemaker"
+  
+  project_name = var.project_name
+  environment = var.environment
+  s3_bucket_arn = module.s3.bucket_arn
+  subnet_id = module.networking.private_subnet_ids[0]
+  security_group_ids = [module.networking.default_security_group_id]
+  aws_account_id = data.aws_caller_identity.current.account_id
+  aws_region = var.aws_region
+  ecr_repository_name = var.ecr_repository_name
+}
+
+
+# Add this at the end of the file, after the existing modules
+
+# QuickSight Module for Analytics and Dashboards
+module "quicksight" {
+  source = "../../modules/quicksight"
+  
+  project_name           = var.project_name
+  environment            = var.environment
+  notification_email     = var.quicksight_notification_email
+  quicksight_edition     = var.quicksight_edition
+  create_redshift_datasource = true
+  create_s3_datasource   = true
+  redshift_database_name = var.redshift_database_name
+  redshift_cluster_endpoint = module.redshift.cluster_endpoint
+  s3_bucket_name         = module.s3.bucket_name
+}
