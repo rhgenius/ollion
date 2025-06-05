@@ -105,7 +105,62 @@ variable "glue_job_timeout" {
 }
 
 
-# Add these variables at the end of the file
+# Add these variables to your existing variables.tf
+
+variable "emr_release_label" {
+  description = "EMR release label"
+  type        = string
+  default     = "emr-6.6.0"
+}
+
+variable "emr_applications" {
+  description = "List of applications to install on the EMR cluster"
+  type        = list(string)
+  default     = ["Spark", "Hadoop", "Hive"]
+}
+
+variable "emr_master_instance_type" {
+  description = "Instance type for the EMR master node"
+  type        = string
+  default     = "m5.xlarge"
+}
+
+variable "emr_core_instance_type" {
+  description = "Instance type for EMR core nodes"
+  type        = string
+  default     = "m5.xlarge"
+}
+
+variable "emr_core_instance_count" {
+  description = "Number of EMR core nodes"
+  type        = number
+  default     = 2
+}
+
+variable "domain_name" {
+  description = "Domain name for Route53"
+  type        = string
+  default     = "example.com"
+}
+
+variable "rds_database_name" {
+  description = "Name of the RDS database"
+  type        = string
+  default     = "appdb"
+}
+
+variable "rds_username" {
+  description = "Username for the RDS database"
+  type        = string
+  default     = "admin"
+}
+
+variable "rds_password" {
+  description = "Password for the RDS database"
+  type        = string
+  sensitive   = true
+  default     = "changeme" # Use a secure method to provide this in production
+}
 
 variable "quicksight_notification_email" {
   description = "Email for QuickSight notifications"

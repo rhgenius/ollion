@@ -32,3 +32,28 @@ output "default_security_group_id" {
   description = "ID of the default security group"
   value       = aws_security_group.default.id
 }
+
+output "alb_security_group_id" {
+  description = "The ID of the security group for ALB"
+  value       = aws_security_group.alb_sg.id
+}
+
+output "nat_public_ips" {
+  description = "List of public Elastic IPs created for NAT Gateway"
+  value       = aws_eip.nat.*.public_ip
+}
+
+output "ecs_security_group_id" {
+  description = "The ID of the security group for ECS tasks"
+  value       = aws_security_group.ecs_sg.id
+}
+
+output "rds_security_group_id" {
+  description = "The ID of the security group for RDS"
+  value       = aws_security_group.rds_sg.id
+}
+
+output "lambda_sg_id" {
+  description = "The ID of the security group for Lambda functions"
+  value       = aws_security_group.lambda_sg.id
+}

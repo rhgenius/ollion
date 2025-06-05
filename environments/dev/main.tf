@@ -176,3 +176,229 @@ module "quicksight" {
   redshift_cluster_endpoint = module.redshift.cluster_endpoint
   s3_bucket_name         = module.s3.bucket_name
 }
+
+
+## Integration with Environment Configuration
+
+# To use these new modules in your environments, you can add them to your environment's `main.tf` 
+# file. Here's an example for the dev environment:
+# ```terraform```
+# Add these modules to your existing main.tf
+
+# EMR Module for big data processing
+module "emr" {
+  source = "../../modules/emr"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  vpc_id       = module.networking.vpc_id
+  subnet_id    = module.networking.private_subnet_ids[0]
+  
+  log_bucket   = module.s3.bucket_id
+  data_bucket  = module.s3.bucket_id
+}
+
+# ALB Module for load balancing
+module "alb" {
+  source = "../../modules/alb"
+  
+  project_name     = var.project_name
+  environment      = var.environment
+  vpc_id           = module.networking.vpc_id
+  subnet_ids       = module.networking.public_subnet_ids
+  security_group_ids = [module.networking.alb_security_group_id]
+  
+  log_bucket       = module.s3.bucket_id
+  
+  target_groups = {
+    app = {
+      port        = 80
+      protocol    = "HTTP"
+      target_type = "ip"
+      health_check_path = "/health"
+    }
+  }
+  
+  default_target_group_key = "app"
+  create_http_listener     = true
+}
+
+# SNS Module for pub/sub messaging
+module "sns" {
+  source = "../../modules/sns"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  topic_name   = "events"
+  
+  subscriptions = {
+    lambda = {
+      protocol = "lambda"
+      endpoint = module.lambda.function_arn
+    }
+  }
+}
+
+# SQS Module for message queuing
+module "sqs" {
+  source = "../../modules/sqs"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  queue_name   = "tasks"
+  
+  source_arns  = [module.sns.topic_arn]
+}
+
+# Route53 Module for DNS management
+module "route53" {
+  source = "../../modules/route53"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  domain_name  = var.domain_name
+  
+  records = {
+    "api" = {
+      type    = "A"
+      ttl     = 300
+      records = [module.networking.nat_public_ips[0]]
+    }
+  }
+  
+  alias_records = {
+    "www" = {
+      type = "A"
+      alias = {
+        name    = module.cloudfront.distribution_domain_name
+        zone_id = "Z2FDTNDATAQYW2" # CloudFront's hosted zone ID
+      }
+    }
+  }
+}
+
+# ECS/Fargate Module for container orchestration
+module "ecs" {
+  source = "../../modules/ecs"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  aws_region   = var.aws_region
+  
+  execution_role_arn = module.iam.ecs_execution_role_arn
+  task_role_arn      = module.iam.ecs_task_role_arn
+  
+  container_name  = "${var.project_name}-container"
+  container_image = "${module.ecr.repository_url}:latest"
+  container_port  = 80
+  
+  subnet_ids         = module.networking.private_subnet_ids
+  security_group_ids = [module.networking.ecs_security_group_id]
+  
+  environment_variables = {
+    ENVIRONMENT = var.environment
+    REGION      = var.aws_region
+  }
+}
+
+# Step Functions Module for workflow orchestration
+module "stepfunctions" {
+  source = "../../modules/stepfunctions"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  
+  state_machine_role_arn = module.iam.step_functions_role_arn
+}
+
+# DynamoDB Module for NoSQL database
+module "dynamodb" {
+  source = "../../modules/dynamodb"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  table_name   = "data-table"
+  
+  hash_key      = "id"
+  hash_key_type = "S"
+  
+  attributes = [
+    {
+      name = "email"
+      type = "S"
+    },
+    {
+      name = "status"
+      type = "S"
+    }
+  ]
+  
+  global_secondary_indexes = [
+    {
+      name            = "EmailIndex"
+      hash_key        = "email"
+      projection_type = "ALL"
+    },
+    {
+      name            = "StatusIndex"
+      hash_key        = "status"
+      projection_type = "ALL"
+    }
+  ]
+  
+  point_in_time_recovery_enabled = true
+}
+
+# RDS Module for relational database
+module "rds" {
+  source = "../../modules/rds"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  
+  subnet_ids         = module.networking.private_subnet_ids
+  security_group_ids = [module.networking.rds_security_group_id]
+  
+  db_name  = var.rds_database_name
+  username = var.rds_username
+  password = var.rds_password
+  
+  instance_class    = "db.t3.medium"
+  allocated_storage = 20
+  multi_az          = false
+  
+  backup_retention_period = 7
+  deletion_protection     = true
+}
+
+# Lambda Module
+module "lambda" {
+  source = "../../modules/lambda"
+  
+  project_name = var.project_name
+  environment  = "dev"
+  handler      = "index.handler"
+  runtime      = "nodejs18.x"
+  s3_bucket    = module.s3.bucket_id
+  s3_key       = "lambda/function.zip"
+  
+  subnet_ids         = module.networking.private_subnet_ids
+  security_group_ids = [module.networking.lambda_sg_id]
+  
+  environment_variables = {
+    ENVIRONMENT = "dev"
+    REGION      = var.aws_region
+  }
+}
+
+# CloudFront Module
+module "cloudfront" {
+  source = "../../modules/cloudfront"
+  
+  project_name        = var.project_name
+  environment         = "dev"
+  s3_origin_domain_name = module.s3.bucket_domain_name
+  s3_origin_id        = module.s3.bucket_id
+  s3_bucket_arn       = module.s3.bucket_arn
+  s3_bucket_id        = module.s3.bucket_id
+}

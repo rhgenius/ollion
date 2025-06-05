@@ -72,6 +72,10 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
+│   ├── quicksight/      # AWS QuickSight module for BI and visualization
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── redshift/        # AWS Redshift module for data warehousing
 │   │   ├── main.tf
 │   │   ├── outputs.tf
@@ -122,6 +126,34 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 | Data Catalog | AWS Glue Data Catalog |
 | Cloud Workflows | AWS Step Functions |
 
+### Machine Learning Components
+| GCP Service | AWS Equivalent |
+|-------------|---------------|
+| Vertex AI | Amazon SageMaker |
+| Vertex AI Workbench | Amazon SageMaker Studio |
+| AutoML | Amazon SageMaker Autopilot |
+| AI Platform Training | Amazon SageMaker Training |
+| AI Platform Prediction | Amazon SageMaker Inference |
+| Vertex AI Feature Store | Amazon SageMaker Feature Store |
+| Vertex AI Model Registry | Amazon SageMaker Model Registry |
+| Vertex AI Pipelines | Amazon SageMaker Pipelines |
+| Vertex AI Experiments | Amazon SageMaker Experiments |
+| Vertex AI TensorBoard | Amazon SageMaker Debugger |
+| Explainable AI | Amazon SageMaker Clarify |
+| AI Platform Notebooks | Amazon SageMaker Notebooks |
+| Vision AI | Amazon Rekognition |
+| Natural Language AI | Amazon Comprehend |
+| Translation AI | Amazon Translate |
+| Speech-to-Text | Amazon Transcribe |
+| Text-to-Speech | Amazon Polly |
+| Document AI | Amazon Textract |
+| Contact Center AI | Amazon Connect with AI capabilities |
+| Dialogflow | Amazon Lex |
+| Video Intelligence API | Amazon Rekognition Video |
+| Cloud TPU | AWS Trainium/Inferentia |
+| Deep Learning VM Images | AWS Deep Learning AMIs |
+| Deep Learning Containers | AWS Deep Learning Containers |
+
 ## Module Descriptions
 ### Networking Module
 Creates a VPC with public and private subnets, internet gateway, NAT gateway, and route tables for secure network architecture.
@@ -157,7 +189,13 @@ Configures AWS Glue for ETL jobs, data catalogs, and data integration.
 Deploys Amazon Redshift clusters for data warehousing and analytics.
 
 ### SageMaker Module
-Sets up Amazon SageMaker for machine learning model training, tuning, and deployment.
+Sets up Amazon SageMaker for machine learning model training, tuning, and deployment with appropriate instance types, storage configurations, and network settings. Includes notebook instances for development, training jobs for model building, and endpoints for inference.
+
+### Machine Learning Pipeline Module
+Orchestrates end-to-end ML workflows connecting data ingestion (S3, Kinesis), processing (Glue), feature engineering, model training (SageMaker), and deployment with appropriate IAM permissions and monitoring.
+
+### AI Services Module
+Integrates AWS AI services like Rekognition (vision), Comprehend (NLP), Transcribe (speech-to-text), and Polly (text-to-speech) with the data pipeline for specialized ML capabilities without custom model development.
 
 ## Prerequisites
 - AWS CLI configured with appropriate credentials

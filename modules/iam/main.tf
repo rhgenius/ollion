@@ -260,3 +260,97 @@ resource "aws_iam_role_policy_attachment" "glue_service" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
   role       = aws_iam_role.glue_role.name
 }
+
+# IAM Role for ECS Execution
+resource "aws_iam_role" "ecs_execution_role" {
+  name = "${var.project_name}-ecs-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-ecs-execution-role"
+    Environment = var.environment
+  }
+}
+
+# Attach policies to ECS Execution role
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# IAM Role for ECS Tasks
+resource "aws_iam_role" "ecs_task_role" {
+  name = "${var.project_name}-ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-ecs-task-role"
+    Environment = var.environment
+  }
+}
+
+# IAM Role for Step Functions
+resource "aws_iam_role" "step_functions_role" {
+  name = "${var.project_name}-step-functions-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "states.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-step-functions-role"
+    Environment = var.environment
+  }
+}
+
+# Attach basic policy to Step Functions role
+resource "aws_iam_role_policy" "step_functions_policy" {
+  name = "${var.project_name}-step-functions-policy"
+  role = aws_iam_role.step_functions_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "lambda:InvokeFunction"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
