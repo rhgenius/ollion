@@ -29,6 +29,14 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │       ├── outputs.tf
 │       └── variables.tf
 ├── modules/
+│   ├── alb/             # AWS Application Load Balancer module
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── cloudfront/      # AWS CloudFront module for content delivery
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── codebuild/       # AWS CodeBuild module
 │   │   ├── README.md
 │   │   ├── main.tf
@@ -44,13 +52,25 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
+│   ├── dynamodb/        # AWS DynamoDB module for NoSQL database
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── ecr/             # AWS ECR module
 │   │   ├── README.md
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
+│   ├── ecs/             # AWS ECS module for container orchestration
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── eks/             # AWS EKS module
 │   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── emr/             # AWS EMR module for big data processing
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
@@ -67,6 +87,10 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
+│   ├── lambda/          # AWS Lambda module for serverless functions
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── networking/      # AWS VPC and networking module
 │   │   ├── README.md
 │   │   ├── main.tf
@@ -76,7 +100,15 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
+│   ├── rds/             # AWS RDS module for relational databases
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── redshift/        # AWS Redshift module for data warehousing
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── route53/         # AWS Route53 module for DNS management
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
@@ -84,7 +116,19 @@ This repository contains Terraform code to deploy a complete AWS DevOps and Data
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
-│   └── sagemaker/       # AWS SageMaker module for ML
+│   ├── sagemaker/       # AWS SageMaker module for ML
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── sns/             # AWS SNS module for notifications
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── sqs/             # AWS SQS module for message queuing
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── stepfunctions/   # AWS Step Functions module for workflow orchestration
 │       ├── main.tf
 │       ├── outputs.tf
 │       └── variables.tf
@@ -190,6 +234,42 @@ Deploys Amazon Redshift clusters for data warehousing and analytics.
 
 ### SageMaker Module
 Sets up Amazon SageMaker for machine learning model training, tuning, and deployment with appropriate instance types, storage configurations, and network settings. Includes notebook instances for development, training jobs for model building, and endpoints for inference.
+
+### ALB Module
+Provisions Application Load Balancers to distribute incoming application traffic across multiple targets, such as EC2 instances, containers, and IP addresses.
+
+### CloudFront Module
+Sets up Amazon CloudFront for content delivery network (CDN) services to securely deliver data, videos, applications, and APIs with low latency and high transfer speeds.
+
+### DynamoDB Module
+Deploys Amazon DynamoDB tables for NoSQL database needs with appropriate capacity modes, indexes, and backup configurations.
+
+### ECS Module
+Sets up Amazon Elastic Container Service for running, stopping, and managing Docker containers on a cluster with appropriate task definitions and services.
+
+### EMR Module
+Deploys Amazon EMR clusters for big data processing and analysis using frameworks like Apache Spark, Hadoop, HBase, and Presto.
+
+### Lambda Module
+Configures AWS Lambda functions for serverless compute, including function code, runtime environments, memory allocations, and execution roles.
+
+### QuickSight Module
+Sets up Amazon QuickSight for business intelligence and data visualization with appropriate datasets, analyses, and dashboards.
+
+### RDS Module
+Deploys Amazon RDS database instances with appropriate engine configurations, storage options, backup settings, and security groups.
+
+### Route53 Module
+Configures Amazon Route 53 for DNS management, including domain registration, routing policies, health checks, and DNS record sets.
+
+### SNS Module
+Sets up Amazon Simple Notification Service for pub/sub messaging and mobile notifications with appropriate topics, subscriptions, and delivery policies.
+
+### SQS Module
+Deploys Amazon Simple Queue Service for message queuing with appropriate queue types, message retention, visibility timeout, and dead-letter queue configurations.
+
+### Step Functions Module
+Configures AWS Step Functions for coordinating multiple AWS services into serverless workflows with appropriate state machines, task definitions, and error handling.
 
 ### Machine Learning Pipeline Module
 Orchestrates end-to-end ML workflows connecting data ingestion (S3, Kinesis), processing (Glue), feature engineering, model training (SageMaker), and deployment with appropriate IAM permissions and monitoring.
