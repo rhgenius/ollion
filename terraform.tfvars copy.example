@@ -1,0 +1,44 @@
+# AWS Configuration
+aws_region = "us-west-2"
+
+# Project Configuration
+project_name = "ollion-devops"
+environment = "dev"
+
+# Network Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# Repository Configuration
+repository_name = "ollion-app-repo"
+ecr_repository_name = "ollion-app-images"
+
+# EKS Configuration
+eks_cluster_names = {
+  test  = "ollion-test-cluster"
+  stage = "ollion-stage-cluster"
+  prod  = "ollion-prod-cluster"
+}
+
+eks_node_group_instance_types = {
+  test  = ["t3.medium"]
+  stage = ["t3.large"]
+  prod  = ["m5.large"]
+}
+
+eks_node_group_desired_size = {
+  test  = 2
+  stage = 2
+  prod  = 3
+}
+
+eks_node_group_min_size = {
+  test  = 1
+  stage = 1
+  prod  = 2
+}
+
+eks_node_group_max_size = {
+  test  = 3
+  stage = 4
+  prod  = 5
+}
