@@ -293,7 +293,7 @@ Integrates AWS AI services like Rekognition (vision), Comprehend (NLP), Transcri
 ```bash
 ./scripts/deploy.sh
 ```
-Note: Ensure to replace the example values in terraform.tfvars.example with your specific configurations. And empty backend.tf file if you use local backend.
+Note: Ensure to replace the example values in terraform.tfvars.example with your specific configurations. And comment out backend.tf content if you use local backend.
 
 ## Architecture Diagram
 The architecture diagram illustrates the high-level components and their interactions in the infrastructure.
