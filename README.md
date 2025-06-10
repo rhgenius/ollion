@@ -1,5 +1,5 @@
-# AWS DevOps and Data Science Infrastructure with Terraform
-This repository contains Terraform code to deploy a complete AWS DevOps and Data Science infrastructure including networking, EKS clusters, IAM roles, CodeCommit, CodeBuild, CodePipeline, ECR resources, and data science components like S3, Kinesis, Glue, Redshift, and SageMaker.
+# AWS DevOps with Terraform
+This repository contains Terraform code to deploy a complete AWS DevOps including networking, EKS clusters, IAM roles, CodeCommit, CodeBuild, CodePipeline, ECR resources, and data science components like S3, Kinesis, Glue, Redshift, and SageMaker.
 
 ## Project Structure
 ```
