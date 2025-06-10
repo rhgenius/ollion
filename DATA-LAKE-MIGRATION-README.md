@@ -41,13 +41,13 @@ Migrating a data lake of this scale requires a carefully orchestrated approach. 
 - Custom streaming solutions : Apache Kafka, Pub/Sub to Kinesis
 ## 4. Technical Implementation
 ### Transfer Optimization
-```
-# Example AWS CLI transfer with optimization
-aws s3 sync gs://source-bucket s3://target-bucket \
-  --storage-class INTELLIGENT_TIERING \
-  --multipart-threshold 64MB \
-  --multipart-chunksize 16MB \
-  --max-concurrent-requests 20
+```bash
+# Example AWS CLI transfer with optimization
+aws s3 sync gs://source-bucket s3://target-bucket \
+  --storage-class INTELLIGENT_TIERING \
+  --multipart-threshold 64MB \
+  --multipart-chunksize 16MB \
+  --max-concurrent-requests 20
 ```
 ### Data Validation
 - Checksum verification : MD5/SHA256 for data integrity
